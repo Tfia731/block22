@@ -32,12 +32,21 @@ const getPartyById = async (id) => {
 
 // delete party
 const deleteParty = async (id) => {
-  // your code here
+  try {
+    const response = await fetch(`${PARTIES_API_URL}/${id}`, {
+      method: 'DELETE',
+    });
+    const deletedParty = await response.json();
+    return deletedParty;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 // render a single party by id
 const renderSinglePartyById = async (id) => {
   try {
+
     // fetch party details from server
     const party = await getPartyById(id);
 
@@ -113,13 +122,25 @@ const renderParties = async (parties) => {
       // see details
       const detailsButton = partyElement.querySelector('.details-button');
       detailsButton.addEventListener('click', async (event) => {
-        // your code here
+        try {
+          const id = event.target.dataset.id;
+          renderSinglePartyById(id);
+        } catch (error) {
+          console.error(error);
+        }
       });
 
       // delete party
       const deleteButton = partyElement.querySelector('.delete-button');
       deleteButton.addEventListener('click', async (event) => {
-        // your code here
+        try {
+          const id = event.target.dataset.id;
+          await deleteParty(id);
+          const parties = await getAllParties();
+          renderParties(parties);
+        } catch (error) {
+          console.error(error);
+        }
       });
     });
   } catch (error) {
@@ -129,7 +150,9 @@ const renderParties = async (parties) => {
 
 // init function
 const init = async () => {
-  // your code here
+  const parties = await getAllParties();
+  console.log(parties);
+  renderParties(parties);
 };
 
 init();
